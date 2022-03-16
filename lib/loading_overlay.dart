@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatefulWidget {
-  const LoadingOverlay({Key? key, required this.child}) : super(key: key);
+  const LoadingOverlay({
+    Key? key,
+    required this.child,
+    this.delay = const Duration(milliseconds: 500),
+  }) : super(key: key);
 
   final Widget child;
+  final Duration delay;
 
   static _LoadingOverlayState of(BuildContext context) {
     return context.findAncestorStateOfType<_LoadingOverlayState>()!;
@@ -39,9 +44,16 @@ class _LoadingOverlayState extends State<LoadingOverlay> {
             child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
         if (_isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
+        Center(
+          child: FutureBuilder(
+            future: Future.delayed(widget.delay),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.done
+                  ? const CircularProgressIndicator()
+                  : const SizedBox();
+            },
           ),
+        ),
       ],
     );
   }
