@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatefulWidget {
@@ -39,21 +41,24 @@ class _LoadingOverlayState extends State<LoadingOverlay> {
       children: [
         widget.child,
         if (_isLoading)
-          const Opacity(
-            opacity: 0.8,
-            child: ModalBarrier(dismissible: false, color: Colors.black),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: const Opacity(
+              opacity: 0.8,
+              child: ModalBarrier(dismissible: false, color: Colors.black),
+            ),
           ),
         if (_isLoading)
-        Center(
-          child: FutureBuilder(
-            future: Future.delayed(widget.delay),
-            builder: (context, snapshot) {
-              return snapshot.connectionState == ConnectionState.done
-                  ? const CircularProgressIndicator()
-                  : const SizedBox();
-            },
+          Center(
+            child: FutureBuilder(
+              future: Future.delayed(widget.delay),
+              builder: (context, snapshot) {
+                return snapshot.connectionState == ConnectionState.done
+                    ? const CircularProgressIndicator()
+                    : const SizedBox();
+              },
+            ),
           ),
-        ),
       ],
     );
   }
